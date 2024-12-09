@@ -74,7 +74,6 @@ def part2(INPUT):
                 disk[j].file_id = "."
                 disk.insert(i + 1, ContiguousChunk(file_id=".", size=leftover))
                 i += 1
-                j -= 1
                 break
             else:
                 i += 1
