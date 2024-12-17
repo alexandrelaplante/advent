@@ -132,33 +132,6 @@ def part1(INPUT):
     print(",".join(map(str, out)))
 
 
-def part2(INPUT):
-    registers, program = INPUT.split("\n\n")
-    registers = registers.split("\n")
-    a = int(registers[0].split(": ")[1])
-    b = int(registers[1].split(": ")[1])
-    c = int(registers[2].split(": ")[1])
-    program = [int(d) for d in program[9:].split(",")]
-
-    # a = 0
-    a = 811280000
-    while True:
-        if a % 10000 == 0:
-            print(a, b, c, program)
-        no_match = False
-        output = compute(a, b, c, program)
-        for p_digit, o_digit in itertools.zip_longest(program, output):
-            if p_digit != o_digit:
-                no_match = True
-                break
-        if no_match:
-            a += 1
-        else:
-            print(list(compute(a, b, c, program)))
-            print(a)
-            break
-
-
 def compute2(a: int) -> Iterator[int]:
     while a != 0:
         b = (a % 8) ^ 3
@@ -192,5 +165,5 @@ def part2_backtrack():
     result = backtrack(0, len(PROGRAM) - 1)
     print(result)
 
-
+part1(INPUT)
 part2_backtrack()
