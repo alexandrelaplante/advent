@@ -475,49 +475,7 @@ def part2(INPUT: str) -> None:
             else:
                 wires[w] = Wire(value=None, gates=[gate], from_gate=None)
 
-    def calc(w: str) -> bool:
-        wire = wires[w]
-        if wire.value is not None:
-            return wire.value
-
-        if gate := wire.from_gate:
-            wire.value = gate.op(calc(gate.w1), calc(gate.w2))
-            return wire.value
-        raise
-
     len_x = 1 + int(sorted(x for x in wires.keys() if x.startswith("x"))[-1][1:])
-    len_y = 1 + int(sorted(y for y in wires.keys() if y.startswith("y"))[-1][1:])
-    len_z = 1 + int(sorted(z for z in wires.keys() if z.startswith("z"))[-1][1:])
-
-    def run(x: int, y: int) -> int:
-        # reinitialize
-        for wire in wires.values():
-            wire.value = None
-
-        # set x
-        for i in range(len_x):
-            wires["x" + str(i).zfill(2)].value = False
-        for i, b in enumerate(reversed(bin(x))):
-            if b == "b":
-                break
-            wires["x" + str(i).zfill(2)].value = b == "1"
-
-        # set y
-        for i in range(len_y):
-            wires["y" + str(i).zfill(2)].value = False
-        for i, b in enumerate(reversed(bin(y))):
-            if b == "b":
-                break
-            wires["y" + str(i).zfill(2)].value = b == "1"
-
-        # calc z
-        output = []
-        for name, wire in wires.items():
-            if name.startswith("z"):
-                output.append((name, calc(name)))
-
-        binary = "".join("1" if v else "0" for n, v in reversed(sorted(output)))
-        return int(binary, 2)
 
     for i in range(len_x):
         n = str(i).zfill(2)
@@ -566,44 +524,6 @@ def part2(INPUT: str) -> None:
                 if and_2 not in [or_1.w1, or_1.w2]:
                     print("anomaly:", n, "or_1 does not have both ands as input")
         print(xor_2, and_2)
-
-    # PROGRAM ANALYSIS:
-    # z28 is certainly one of the ones that needs to be swapped, since it depends only on one gate
-    # and does not take previous gates into account (which means it can't be calculating carry)
-    # it's an input AND, so we can swap it
-    # z08 is not the result of a XOR, it's OR
-    # z39 is not the result of XOR, it's AND
-    #
-    # From running more code:
-    # z28 <-> tfb
-    # z39 <-> mqh
-
-    # wires_from_gates = [w for w in wires.values() if w.from_gate]
-    # length = len(wires_from_gates)
-
-    # checking all possible 4 pairs is completely infeasible
-    # length = 30
-    # c = 0
-    # for w1a in range(length):
-    #     print(f"{w1a}/{length}")
-    #     for w1b in range(w1a, length):
-    #         for w2a in range(w1a, length):
-    #             for w2b in range(w2a, length):
-    #                 for w3a in range(w2a, length):
-    #                     for w3b in range(w3a, length):
-    #                         for w4a in range(w3a, length):
-    #                             for w4b in range(w4a, length):
-    #                                 c += 1
-    # print(c)
-
-    # Figure out which output bits are impacted by which gates
-    # Figure out which output bits are wrong
-    # try all possible pairs within wrong bit impacting gates?
-    # if I can narrow it down from 222 to ~25 gates I can brute force
-
-    # print(run(1, 4))
-    # print(2**43 == run(2**43 - 1, 1))
-    # print(2**43 == run(1, 2**43 - 1))
 
     print(",".join(sorted(SWAPS.keys())))
 
